@@ -1,4 +1,4 @@
-import { celsiusToFahrenheit } from '../src/converter';
+import { celsiusToFahrenheit, classifySensorReading } from '../src/converter';
 
 describe('celsiusToFahrenheit', () => {
   it('converts boiling point correctly', () => {
@@ -14,5 +14,29 @@ describe('celsiusToFahrenheit', () => {
   it('converts body temperature correctly', () => {
     // 37°C = 98.6°F — bug returns 66.6
     expect(celsiusToFahrenheit(37)).toBeCloseTo(98.6, 1);
+  });
+});
+
+describe('classifySensorReading', () => {
+  it('returns normal for safe operating temperatures', () => {
+    expect(classifySensorReading(25)).toBe('normal');
+    expect(classifySensorReading(0)).toBe('normal');
+    expect(classifySensorReading(59)).toBe('normal');
+  });
+
+  it('returns warning for elevated temperatures', () => {
+    expect(classifySensorReading(60)).toBe('warning');
+    expect(classifySensorReading(75)).toBe('warning');
+    expect(classifySensorReading(79)).toBe('warning');
+  });
+
+  it('returns critical for dangerous temperatures', () => {
+    expect(classifySensorReading(80)).toBe('critical');
+    expect(classifySensorReading(120)).toBe('critical');
+  });
+
+  it('returns critical for sub-zero readings', () => {
+    expect(classifySensorReading(-1)).toBe('critical');
+    expect(classifySensorReading(-40)).toBe('critical');
   });
 });
