@@ -1,0 +1,11 @@
+/**
+ * Orbit Temperature Converter — Core logic
+ * Scaffolded with Claude Code
+ */
+
+/**
+ * Convert Celsius to Fahrenheit.
+ */
+export function celsiusToFahrenheit(celsius: number): number {
+  return celsius * (9 / 5);
+}

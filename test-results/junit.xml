@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="3" failures="3" errors="0" time="0.00384175">
+    <testsuite name="tests/converter.test.ts" timestamp="2026-04-24T19:03:01.014Z" hostname="cci-jacobschmitt-w95kj" tests="3" failures="3" errors="0" skipped="0" time="0.00384175">
+        <testcase classname="tests/converter.test.ts" name="celsiusToFahrenheit &gt; converts boiling point correctly" time="0.002750291">
+            <failure message="expected 180 to be close to 212, received difference is 32, but expected 0.05" type="AssertionError">
+AssertionError: expected 180 to be close to 212, received difference is 32, but expected 0.05
+ ❯ tests/converter.test.ts:7:38
+            </failure>
+        </testcase>
+        <testcase classname="tests/converter.test.ts" name="celsiusToFahrenheit &gt; converts freezing point correctly" time="0.000361833">
+            <failure message="expected +0 to be close to 32, received difference is 32, but expected 0.05" type="AssertionError">
+AssertionError: expected +0 to be close to 32, received difference is 32, but expected 0.05
+ ❯ tests/converter.test.ts:12:36
+            </failure>
+        </testcase>
+        <testcase classname="tests/converter.test.ts" name="celsiusToFahrenheit &gt; converts body temperature correctly" time="0.000190375">
+            <failure message="expected 66.60000000000001 to be close to 98.6, received difference is 31.999999999999986, but expected 0.05" type="AssertionError">
+AssertionError: expected 66.60000000000001 to be close to 98.6, received difference is 31.999999999999986, but expected 0.05
+ ❯ tests/converter.test.ts:17:37
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>
