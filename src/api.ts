@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { celsiusToFahrenheit } from './converter';
+import { celsiusToFahrenheit, fahrenheitToCelsius } from './converter';
 
 export const app = express();
 app.use(express.json());
@@ -62,25 +62,44 @@ app.get('/', (_req: Request, res: Response) => {
   <div class="card">
     <div class="wordmark">Orbit</div>
     <h1>Temperature Converter</h1>
-    <p class="subtitle">Convert Celsius to Fahrenheit.</p>
-    <label for="celsius">Temperature (°C)</label>
-    <input type="number" id="celsius" value="100" step="any">
+    <p class="subtitle">Convert between Celsius and Fahrenheit.</p>
+    <div style="display:flex;gap:8px;margin-bottom:20px;">
+      <button id="btn-ctof" onclick="setMode('c-to-f')" style="flex:1;background:#00DB74;color:#0d1117;">°C → °F</button>
+      <button id="btn-ftoc" onclick="setMode('f-to-c')" style="flex:1;background:#21262d;color:#e6edf3;border:1px solid #30363d;">°F → °C</button>
+    </div>
+    <label for="temp-input" id="input-label">Temperature (°C)</label>
+    <input type="number" id="temp-input" value="100" step="any">
     <button onclick="convert()">Convert</button>
     <div class="result" id="result">
-      <div class="result-label">Fahrenheit</div>
+      <div class="result-label" id="result-label">Fahrenheit</div>
       <div class="result-value" id="result-value"></div>
     </div>
   </div>
   <script>
+    let mode = 'c-to-f';
+    function setMode(m) {
+      mode = m;
+      const isCtoF = mode === 'c-to-f';
+      document.getElementById('input-label').textContent = isCtoF ? 'Temperature (°C)' : 'Temperature (°F)';
+      document.getElementById('result-label').textContent = isCtoF ? 'Fahrenheit' : 'Celsius';
+      document.getElementById('temp-input').value = isCtoF ? '100' : '212';
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('btn-ctof').style.background = isCtoF ? '#00DB74' : '#21262d';
+      document.getElementById('btn-ctof').style.color = isCtoF ? '#0d1117' : '#e6edf3';
+      document.getElementById('btn-ftoc').style.background = isCtoF ? '#21262d' : '#00DB74';
+      document.getElementById('btn-ftoc').style.color = isCtoF ? '#e6edf3' : '#0d1117';
+    }
     async function convert() {
-      const celsius = parseFloat(document.getElementById('celsius').value);
-      const res = await fetch('/convert', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ celsius })
-      });
-      const data = await res.json();
-      document.getElementById('result-value').textContent = data.fahrenheit.toFixed(1) + '°F';
+      const val = parseFloat(document.getElementById('temp-input').value);
+      if (mode === 'c-to-f') {
+        const res = await fetch('/convert', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ celsius: val }) });
+        const data = await res.json();
+        document.getElementById('result-value').textContent = data.fahrenheit.toFixed(1) + '°F';
+      } else {
+        const res = await fetch('/convert/f-to-c', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fahrenheit: val }) });
+        const data = await res.json();
+        document.getElementById('result-value').textContent = data.celsius.toFixed(1) + '°C';
+      }
       document.getElementById('result').style.display = 'block';
     }
   </script>
@@ -94,6 +113,14 @@ app.post('/convert', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'celsius must be a number' });
   }
   return res.json({ fahrenheit: celsiusToFahrenheit(celsius) });
+});
+
+app.post('/convert/f-to-c', (req: Request, res: Response) => {
+  const { fahrenheit } = req.body as { fahrenheit: number };
+  if (typeof fahrenheit !== 'number') {
+    return res.status(400).json({ error: 'fahrenheit must be a number' });
+  }
+  return res.json({ celsius: fahrenheitToCelsius(fahrenheit) });
 });
 
 app.get('/health', (_req: Request, res: Response) => {
